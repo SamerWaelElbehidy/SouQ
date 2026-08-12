@@ -42,7 +42,7 @@ export default function HeroSection() {
   return (
     <section
       id="hero"
-      className="relative overflow-hidden min-h-screen flex flex-col items-center justify-center pt-24 pb-20 px-6"
+      className="relative overflow-hidden min-h-screen flex flex-col items-center justify-center pt-16 md:pt-24 pb-20 px-6"
       style={{ background: 'linear-gradient(160deg, #0a1929 0%, #16324f 55%, #0d2e1e 100%)' }}
     >
       {/* ── Background grid ── */}
@@ -114,7 +114,7 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           className="font-black text-white leading-[1.2] mb-6 tracking-tight"
-          style={{ fontSize: 'clamp(1.25rem, 6.5vw, 4rem)' }}
+          style={{ fontSize: 'clamp(1.3rem, 6.7vw, 4rem)' }}
         >
           <span style={{ display: 'block', whiteSpace: 'nowrap' }}>
             اشترِ وبِع{' '}
