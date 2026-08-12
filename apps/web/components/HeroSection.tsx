@@ -114,9 +114,9 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           className="font-black text-white leading-[1.2] mb-6 tracking-tight"
-          style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}
+          style={{ fontSize: 'clamp(1.75rem, 6vw, 4rem)' }}
         >
-          <span style={{ display: 'block', whiteSpace: 'nowrap' }}>
+          <span style={{ display: 'block' }}>
             اشترِ وبِع{' '}
             <span
               style={{
@@ -129,7 +129,7 @@ export default function HeroSection() {
               المنتجات الرقمية
             </span>
           </span>
-          <span style={{ display: 'block', whiteSpace: 'nowrap' }} className="text-white/90">
+          <span style={{ display: 'block' }} className="text-white/90">
             بكل أمان وسهولة
           </span>
         </motion.h1>
