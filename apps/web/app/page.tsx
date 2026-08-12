@@ -215,7 +215,10 @@ export default function HomePage() {
             <div className="flex flex-col md:flex-row items-center justify-between gap-10">
               <AnimatedSection direction="right" className="max-w-xl">
                 <p className="text-[11px] font-bold uppercase tracking-widest text-teal mb-4">للبائعين</p>
-                <h2 className="text-3xl md:text-4xl font-black text-white leading-tight mb-4 whitespace-nowrap">
+                <h2
+                  className="font-black text-white leading-tight mb-4"
+                  style={{ whiteSpace: 'nowrap', fontSize: 'clamp(1.5rem, 3vw, 2.25rem)' }}
+                >
                   لديك منتج رقمي؟{' '}
                   <span className="text-teal">ابدأ البيع اليوم</span>
                 </h2>

@@ -113,7 +113,8 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="text-[2rem] sm:text-[2.8rem] md:text-[3.2rem] font-black text-white leading-[1.15] mb-6 tracking-tight whitespace-nowrap"
+          className="font-black text-white leading-[1.15] mb-6 tracking-tight"
+          style={{ whiteSpace: 'nowrap', fontSize: 'clamp(1.4rem, 4vw, 3.2rem)' }}
         >
           اشترِ وبِع{' '}
           <span
