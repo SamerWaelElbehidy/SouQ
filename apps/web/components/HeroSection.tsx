@@ -113,21 +113,25 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="font-black text-white leading-[1.15] mb-6 tracking-tight"
-          style={{ whiteSpace: 'nowrap', fontSize: 'clamp(1.4rem, 4vw, 3.2rem)' }}
+          className="font-black text-white leading-[1.2] mb-6 tracking-tight"
+          style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}
         >
-          اشترِ وبِع{' '}
-          <span
-            style={{
-              background: 'linear-gradient(135deg, #178f7a 30%, #4ade80 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}
-          >
-            المنتجات الرقمية
-          </span>{' '}
-          <span className="text-white/90">بكل أمان وسهولة</span>
+          <span style={{ display: 'block', whiteSpace: 'nowrap' }}>
+            اشترِ وبِع{' '}
+            <span
+              style={{
+                background: 'linear-gradient(135deg, #178f7a 30%, #4ade80 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
+              المنتجات الرقمية
+            </span>
+          </span>
+          <span style={{ display: 'block', whiteSpace: 'nowrap' }} className="text-white/90">
+            بكل أمان وسهولة
+          </span>
         </motion.h1>
 
         {/* Subheading */}
