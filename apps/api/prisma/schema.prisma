@@ -1,0 +1,320 @@
+// ============================================================
+// SouQ سوق — Prisma Schema (Phase 1: full design, auth tables in active use)
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- Enums ----------
+
+enum ProductStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  BLOCKED
+}
+
+enum ProductCodeStatus {
+  AVAILABLE
+  RESERVED
+  SOLD
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+  CANCELLED
+}
+
+enum PaymentProvider {
+  BINANCE_PAY
+  MOYASAR
+  HYPERPAY
+}
+
+enum OtpPurpose {
+  REGISTER
+  LOGIN
+  DASHBOARD_LOGIN
+  PASSWORD_RESET
+}
+
+// ---------- Customers / Sellers ----------
+
+model User {
+  id           String   @id @default(uuid())
+  fullName     String
+  email        String   @unique
+  phone        String?
+  passwordHash String? // null if the account was created via Google
+  googleId     String?  @unique
+  avatarUrl    String?
+  isVerified   Boolean  @default(false)
+  isBlocked    Boolean  @default(false)
+  badgeId      String?
+  badge        Badge?   @relation(fields: [badgeId], references: [id])
+
+  products  Product[]
+  orders    Order[]
+  donations Donation[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Badge {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+  icon        String?
+  color       String?
+  users       User[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("badges")
+}
+
+// ---------- Employees / RBAC (schema ready — enforcement wired in Phase 3) ----------
+
+model AdminUser {
+  id           String   @id @default(uuid())
+  fullName     String
+  email        String   @unique
+  passwordHash String
+  isActive     Boolean  @default(true)
+
+  roles     AdminUserRole[]
+  auditLogs AuditLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admin_users")
+}
+
+model Role {
+  id          String @id @default(uuid())
+  name        String @unique
+  description String?
+
+  permissions RolePermission[]
+  adminUsers  AdminUserRole[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id  String @id @default(uuid())
+  key String @unique // e.g. products.approve, users.block
+
+  roles RolePermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model AdminUserRole {
+  adminUserId String
+  roleId      String
+  adminUser   AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  role        Role      @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([adminUserId, roleId])
+  @@map("admin_user_roles")
+}
+
+// ---------- OTP ----------
+// Note: live OTP codes are kept in Redis with a TTL for speed.
+// This table is a durable audit trail (hashed codes only, never plaintext).
+
+model OtpCode {
+  id        String     @id @default(uuid())
+  identifier String    // email or admin email the code was issued for
+  codeHash  String
+  purpose   OtpPurpose
+  attempts  Int        @default(0)
+  expiresAt DateTime
+  consumedAt DateTime?
+  createdAt DateTime   @default(now())
+
+  @@index([identifier, purpose])
+  @@map("otp_codes")
+}
+
+// ---------- Catalog (schema ready — full CRUD wired in Phase 2/3) ----------
+
+model Category {
+  id       String     @id @default(uuid())
+  name     String
+  slug     String     @unique
+  parentId String?
+  parent   Category?  @relation("CategoryToCategory", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryToCategory")
+  products Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id                String        @id @default(uuid())
+  sellerId          String
+  seller            User          @relation(fields: [sellerId], references: [id])
+  categoryId        String
+  category          Category      @relation(fields: [categoryId], references: [id])
+  name              String
+  description       String
+  images            String[]
+  price             Decimal       @db.Decimal(10, 2)
+  priceAfterDiscount Decimal?     @db.Decimal(10, 2)
+  status            ProductStatus @default(PENDING)
+  rejectionReason   String?
+
+  codes  ProductCode[]
+  orders Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("products")
+}
+
+model ProductCode {
+  id               String             @id @default(uuid())
+  productId        String
+  product          Product            @relation(fields: [productId], references: [id])
+  codeValueEncrypted String
+  status           ProductCodeStatus  @default(AVAILABLE)
+  orderId          String?
+  order            Order?             @relation(fields: [orderId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([productId, status])
+  @@map("product_codes")
+}
+
+// ---------- Orders / Payments / Donations (schema ready — wired in Phase 3) ----------
+
+model Order {
+  id              String          @id @default(uuid())
+  buyerId         String
+  buyer           User            @relation(fields: [buyerId], references: [id])
+  productId       String
+  product         Product         @relation(fields: [productId], references: [id])
+  quantity        Int             @default(1)
+  totalAmount     Decimal         @db.Decimal(10, 2)
+  currency        String          @default("USD")
+  status          OrderStatus     @default(PENDING)
+  paymentProvider PaymentProvider?
+
+  codes        ProductCode[]
+  transactions Transaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("orders")
+}
+
+model Transaction {
+  id                   String   @id @default(uuid())
+  orderId              String
+  order                Order    @relation(fields: [orderId], references: [id])
+  provider             PaymentProvider
+  providerTransactionId String?
+  amount               Decimal  @db.Decimal(10, 2)
+  status               String
+  rawPayload           Json?
+
+  createdAt DateTime @default(now())
+
+  @@map("transactions")
+}
+
+model Donation {
+  id        String   @id @default(uuid())
+  donorId   String?
+  donor     User?    @relation(fields: [donorId], references: [id])
+  donorName String? // used when donor is anonymous but still wants a display name
+  amount    Decimal  @db.Decimal(10, 2)
+  currency  String   @default("USD")
+  message   String?
+  isPublic  Boolean  @default(true)
+
+  createdAt DateTime @default(now())
+
+  @@map("donations")
+}
+
+// ---------- Content (CMS) ----------
+
+model CmsContent {
+  key       String   @id // e.g. "about_us"
+  content   Json
+  updatedBy String?
+  updatedAt DateTime @updatedAt
+
+  @@map("cms_content")
+}
+
+model BlogPost {
+  id          String    @id @default(uuid())
+  title       String
+  slug        String    @unique
+  content     String
+  coverImage  String?
+  authorAdminId String?
+  publishedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("blog_posts")
+}
+
+model Faq {
+  id        String @id @default(uuid())
+  question  String
+  answer    String
+  orderIndex Int   @default(0)
+
+  @@map("faqs")
+}
+
+// ---------- Audit ----------
+
+model AuditLog {
+  id          String    @id @default(uuid())
+  adminUserId String
+  adminUser   AdminUser @relation(fields: [adminUserId], references: [id])
+  action      String
+  targetType  String
+  targetId    String?
+  meta        Json?
+  ipAddress   String?
+
+  createdAt DateTime @default(now())
+
+  @@map("audit_logs")
+}
