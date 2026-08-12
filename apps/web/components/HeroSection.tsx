@@ -114,9 +114,9 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           className="font-black text-white leading-[1.2] mb-6 tracking-tight"
-          style={{ fontSize: 'clamp(1.75rem, 6vw, 4rem)' }}
+          style={{ fontSize: 'clamp(1rem, 5vw, 4rem)' }}
         >
-          <span style={{ display: 'block' }}>
+          <span style={{ display: 'block', whiteSpace: 'nowrap' }}>
             اشترِ وبِع{' '}
             <span
               style={{
