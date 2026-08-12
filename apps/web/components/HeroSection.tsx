@@ -113,7 +113,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="text-[2.6rem] sm:text-[3.5rem] md:text-[4rem] font-black text-white leading-[1.15] mb-6 tracking-tight"
+          className="text-[2rem] sm:text-[2.8rem] md:text-[3.2rem] font-black text-white leading-[1.15] mb-6 tracking-tight whitespace-nowrap"
         >
           اشترِ وبِع{' '}
           <span
@@ -125,8 +125,7 @@ export default function HeroSection() {
             }}
           >
             المنتجات الرقمية
-          </span>
-          <br />
+          </span>{' '}
           <span className="text-white/90">بكل أمان وسهولة</span>
         </motion.h1>
 
