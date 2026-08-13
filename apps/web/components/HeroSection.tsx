@@ -9,19 +9,19 @@ import {
 
 /* Floating icon cards around the hero */
 const FLOATERS = [
-  { Icon: CodeIcon,         label: 'برمجيات',    top: '18%', start: '6%',  delay: 0,    rotate: -8  },
-  { Icon: PenToolIcon,      label: 'تصميم',     top: '14%', end: '8%',    delay: 0.3,  rotate: 7   },
-  { Icon: ShieldCheckIcon,  label: 'موثّق',     top: '68%', start: '4%',  delay: 0.6,  rotate: -5  },
-  { Icon: BookOpenIcon,     label: 'كورسات',    top: '72%', end: '6%',    delay: 0.9,  rotate: 6   },
-  { Icon: ZapIcon,          label: 'تسليم فوري', top: '38%', start: '2%',  delay: 0.45, rotate: -10 },
-  { Icon: PackageIcon,      label: 'منتجات',    top: '42%', end: '3%',    delay: 0.75, rotate: 8   },
+  { Icon: CodeIcon, label: 'برمجيات', top: '18%', start: '6%', delay: 0, rotate: -8 },
+  { Icon: PenToolIcon, label: 'تصميم', top: '14%', end: '8%', delay: 0.3, rotate: 7 },
+  { Icon: ShieldCheckIcon, label: 'موثّق', top: '68%', start: '4%', delay: 0.6, rotate: -5 },
+  { Icon: BookOpenIcon, label: 'كورسات', top: '72%', end: '6%', delay: 0.9, rotate: 6 },
+  { Icon: ZapIcon, label: 'تسليم فوري', top: '38%', start: '2%', delay: 0.45, rotate: -10 },
+  { Icon: PackageIcon, label: 'منتجات', top: '42%', end: '3%', delay: 0.75, rotate: 8 },
 ];
 
 const STATS = [
   { value: '+10,000', label: 'منتج رقمي' },
-  { value: '+5,200',  label: 'بائع نشط'  },
-  { value: '+28,000', label: 'عملية بيع'  },
-  { value: '4.9',     label: 'تقييم'      },
+  { value: '+5,200', label: 'بائع نشط' },
+  { value: '+28,000', label: 'عملية بيع' },
+  { value: '4.9', label: 'تقييم' },
 ];
 
 /* Floating animation for icon cards */
@@ -42,8 +42,8 @@ export default function HeroSection() {
   return (
     <section
       id="hero"
-      className="relative overflow-hidden min-h-screen flex flex-col items-center justify-start pb-20 px-6"
-      style={{ background: 'linear-gradient(160deg, #0a1929 0%, #16324f 55%, #0d2e1e 100%)', paddingTop: 'clamp(1.5rem, 8vw, 8rem)' }}
+      className="relative overflow-hidden min-h-screen flex flex-col items-center justify-start pt-20 md:pt-32 pb-20 px-6"
+      style={{ background: 'linear-gradient(160deg, #0a1929 0%, #16324f 55%, #0d2e1e 100%)' }}
     >
       {/* ── Background grid ── */}
       <div
